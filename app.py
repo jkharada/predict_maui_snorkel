@@ -1,11 +1,11 @@
 import streamlit as st
 from datetime import date, timedelta
-from snorkel_background import get_results
+from snorkel_background import update_results
 from plotting import plot_error
 
 st.set_page_config(layout="wide")
 
-nw, df_results = get_results()
+nw, df_results = update_results()
 k = 3.5
 s = 6.0
 

@@ -150,7 +150,7 @@ def get_scores():
               }
     response = requests.get(url, headers=headers)
     
-    soup = BeautifulSoup(response.text)
+    soup = BeautifulSoup(response.text, features="html.parser")
     parent = soup.find('div', attrs={'class': 'rte'})
     soup_scores = parent.find_all('strong')
     soup_dates = parent.find_all('h2')
@@ -272,7 +272,30 @@ def get_mesowest_feature_dict():
     return feature_dict
 
 import pickle
+
+def update_results():
+    
+    try:
+        with open('week_results.p', 'rb') as f:
+            df_results = pickle.load(f)
+    except FileNotFoundError:
+        return get_results()
+    
+    if pd.Timestamp(date.today()) == df_results.iloc[-1]['Dates']:
+        try:
+            with open('day_results.p', 'rb') as f:
+                nw_prediction = pickle.load(f)
+        except FileNotFoundError:
+            return get_results()
+            
+        return nw_prediction, df_results
+    
+    else:
+        return get_results()
+        
+
 def get_results():
+    
     with open('1_day_mesowest_model.p', 'rb') as f:
         model = pickle.load(f)
         
@@ -284,4 +307,11 @@ def get_results():
     df_results['Prediction'] = y_predict[:7]
     nw_prediction = y_predict[-1]
     
+    with open('week_results.p', 'wb') as f:
+        pickle.dump(df_results, f)
+    
+    with open('day_results.p', 'wb') as f:
+        pickle.dump(nw_prediction, f)
+    
     return nw_prediction, df_results
+
