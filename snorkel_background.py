@@ -230,11 +230,17 @@ def get_mean_mesowest_data(station, meas_list):
     df_new = df_new.loc[:, ~df_new.columns.duplicated()]
     
     if 'peak_wind_speed' in meas_list and 'wind_gust' in df.columns:
-        df_new['peak_wind_speed'][df_new['peak_wind_speed'].isnull()] = df.groupby('date_time').max(numeric_only=True)['wind_gust']
-        
+        if 'peak_wind_speed' in df.columns:
+            df_new['peak_wind_speed'][df_new['peak_wind_speed'].isnull()] = df.groupby('date_time').max(numeric_only=True)['wind_gust']
+        else:
+            df_new['peak_wind_speed'] = df.groupby('date_time').max(numeric_only=True)['wind_gust']
+
     if 'peak_wind_direction'in meas_list:
-        df_new['peak_wind_direction'][df_new['peak_wind_direction'].isnull()] = df_new['peak_wind_direction'][df_new['peak_wind_direction'].isnull()].combine_first(df[['date_time','wind_direction']].loc[df.groupby('date_time')['wind_gust'].idxmax().dropna()].set_index('date_time').rename({'wind_direction':'peak_wind_direction'}, axis=1).squeeze())
-    
+        if 'peak_wind_direction'in df.columns:
+            df_new['peak_wind_direction'][df_new['peak_wind_direction'].isnull()] = df_new['peak_wind_direction'][df_new['peak_wind_direction'].isnull()].combine_first(df[['date_time','wind_direction']].loc[df.groupby('date_time')['wind_gust'].idxmax().dropna()].set_index('date_time').rename({'wind_direction':'peak_wind_direction'}, axis=1).squeeze())
+        else:
+            df_new['peak_wind_direction'] = df[['date_time','wind_direction']].loc[df.groupby('date_time')['wind_gust'].idxmax().dropna()].set_index('date_time').rename({'wind_direction':'peak_wind_direction'}, axis=1).squeeze()
+
     if 'precip_accum' in df.columns and 'precip_accum_24_hour' in meas_list:
         df_new['precip_accum_24_hour'] = df.groupby('date_time')['precip_accum'].agg(max) - df.groupby('date_time')['precip_accum'].first()
     elif 'precip_accum_24_hour'in meas_list and 'precip_accum_one_hour' in df.columns:
@@ -242,11 +248,12 @@ def get_mean_mesowest_data(station, meas_list):
             df_new['precip_accum_24_hour'][df_new['precip_accum_24_hour'].isnull()] = df.groupby('date_time').sum(numeric_only=True)['precip_accum_one_hour']
         else:
             df_new['precip_accum_24_hour'] = df.groupby('date_time').sum(numeric_only=True)['precip_accum_one_hour']
-    
-    
+
+
     df_new.rename(lambda x: station + "_" + x if 'date' not in x else x, axis=1, inplace=True)
     
     return df_new
+
 
 def get_mesowest_feature_dict():
     """
