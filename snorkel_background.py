@@ -61,8 +61,8 @@ def get_buoy_features():
     # get buoy features for each station
     feature_dict = get_buoy_feature_dict()
     
-    start_date = f"{date.today() - pd.Timedelta(days=9):%Y-%m-%d}"
-    end_date = f"{date.today()-pd.Timedelta(days=2):%Y-%m-%d}"
+    start_date = f"{date.today() - pd.Timedelta(days=8):%Y-%m-%d}"
+    end_date = f"{date.today()-pd.Timedelta(days=1):%Y-%m-%d}"
     
     df_buoy_features = pd.DataFrame(index=pd.date_range(start_date, end_date))
     
@@ -135,6 +135,7 @@ def get_buoy_feature_dict():
         
     return feature_dict
 
+
 def get_scores():
     """
     Gets the last 7 days of snorkel scores from the snorkel store website. 
@@ -149,7 +150,7 @@ def get_scores():
               }
     response = requests.get(url, headers=headers)
     
-    soup = BeautifulSoup(response.text, features="html.parser")
+    soup = BeautifulSoup(response.text)
     parent = soup.find('div', attrs={'class': 'rte'})
     soup_scores = parent.find_all('strong')
     soup_dates = parent.find_all('h2')
@@ -159,13 +160,14 @@ def get_scores():
     k_scores = re.findall(r"Ka’anapali: (\d.\d)", str(soup_scores))
     dates = re.findall(r"[MTWFS]\w+day, [JFMAJSOND]\w+ \d\d? 20\d\d", str(soup_dates))
 
-    df_actual_scores = pd.DataFrame({'Dates': dates[:7], 'Actual': nw_scores[:7], 's_scores': s_scores[:7], 'k_scores': k_scores[:7]})
+    #df_actual_scores = pd.DataFrame({'Dates': dates[:7], 'Actual': nw_scores[:7], 's_scores': s_scores[:7], 'k_scores': k_scores[:7]})
+    df_actual_scores = pd.DataFrame({'Dates': pd.date_range(date.today() - pd.Timedelta(days=6),date.today()), 'Actual': nw_scores[:7][::-1], 's_scores': s_scores[:7][::-1], 'k_scores': k_scores[:7][::-1]})
     df_actual_scores['Dates'] = df_actual_scores['Dates'].apply(pd.to_datetime)
     return df_actual_scores
 
 def get_weather_features():
-    start_date = f"{date.today() - pd.Timedelta(days=9):%Y%m%d}" + '1000'
-    end_date = f"{date.today() - pd.Timedelta(days=2):%Y%m%d}" + "1000"
+    start_date = f"{date.today() - pd.Timedelta(days=8):%Y%m%d}" + '1000'
+    end_date = f"{date.today() - pd.Timedelta(days=1):%Y%m%d}" + "1000"
     
     df_features = list(pd.read_csv('cleaned_features_mesowest.csv', index_col='Date_Time').columns)
     feature_dict = get_mesowest_feature_dict()
@@ -187,8 +189,8 @@ from datetime import date
 from time import sleep
 
 def get_mean_mesowest_data(station, meas_list):
-    start_date = f"{date.today() - pd.Timedelta(days=9):%Y%m%d}" + '1000'
-    end_date = f"{date.today():%Y%m%d}" + "1000"
+    start_date = f"{date.today() - pd.Timedelta(days=8):%Y%m%d}" + '1000'
+    end_date = f"{date.today() - pd.Timedelta(days=1):%Y%m%d}" + "1000"
     
     params = {
     'token': mesowest_auth_key,
@@ -264,7 +266,7 @@ def get_mesowest_feature_dict():
 
 import pickle
 def get_results():
-    with open('2_mesowest_day_model.p', 'rb') as f:
+    with open('1_day_mesowest_model.p', 'rb') as f:
         model = pickle.load(f)
         
     df_x = get_features()
