@@ -2,6 +2,7 @@ import configparser
 import requests
 import pandas as pd
 import numpy as np
+import os
 from datetime import date
 from bs4 import BeautifulSoup
 import re
