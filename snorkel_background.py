@@ -6,9 +6,11 @@ from datetime import date
 from bs4 import BeautifulSoup
 import re
 
-parser = configparser.ConfigParser()
-_ = parser.read('snorkel.cfg')
-mesowest_auth_key = parser.get('MesoWest', 'token')
+#parser = configparser.ConfigParser()
+#_ = parser.read('snorkel.cfg')
+#mesowest_auth_key = parser.get('MesoWest', 'token')
+
+mesowest_auth_key = os.getenv('mesowest_auth_key')
 
 def get_features():
     df_buoy = get_buoy_features()
