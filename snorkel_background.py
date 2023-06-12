@@ -208,7 +208,7 @@ def get_mean_mesowest_data(station, meas_list):
     response = requests.get('https://api.synopticdata.com/v2/stations/timeseries', params=params)
     
     while response.status_code != 200:
-        time.sleep(5)
+        sleep(5)
         params = {
         'token': mesowest_auth_key,
         'stid': station,
@@ -299,7 +299,7 @@ def update_results():
 
 def get_results():
     
-    with open('1_day_mesowest_model.p', 'rb') as f:
+    with open('1_day_mesowest_model_render.p', 'rb') as f:
         model = pickle.load(f)
         
     df_x = get_features()
