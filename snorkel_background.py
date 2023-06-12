@@ -72,7 +72,7 @@ def get_buoy_features():
     for station, meas_list in feature_dict.items():
         df_buoy_features = pd.merge(df_buoy_features, get_mean_station_data(station, meas_list), left_index=True, right_index=True)
     
-    df_median = pd.read_csv('buoy_features_median.csv', index_col='Unnamed: 0') ## CREATE THIS TABLE
+    df_median = pd.read_csv('datasets/buoy_features_median.csv', index_col='Unnamed: 0') ## CREATE THIS TABLE
     medians = df_median['0'].to_dict()
     df_buoy_features.fillna(medians, inplace=True)
     
@@ -125,7 +125,7 @@ def get_buoy_feature_dict():
     """
     Returns dictionary with station as keys and a list of measurements as values
     """
-    buoy_features = list(pd.read_csv('buoy_data_cleaned.csv').columns)
+    buoy_features = list(pd.read_csv('datasets/buoy_data_cleaned.csv').columns)
     buoy_features.remove('date')
     buoy_stations = [ feature.split('_')[0] for feature in buoy_features ]
     buoy_stations = list(set(buoy_stations))
@@ -172,7 +172,7 @@ def get_weather_features():
     start_date = f"{date.today() - pd.Timedelta(days=8):%Y%m%d}" + '1000'
     end_date = f"{date.today() - pd.Timedelta(days=1):%Y%m%d}" + "1000"
     
-    df_features = list(pd.read_csv('cleaned_features_mesowest.csv', index_col='Date_Time').columns)
+    df_features = list(pd.read_csv('datasets/cleaned_features_mesowest.csv', index_col='Date_Time').columns)
     feature_dict = get_mesowest_feature_dict()
     
     df_new = pd.DataFrame()
@@ -182,7 +182,7 @@ def get_weather_features():
         
     # Fill in NaNs, if they exist
     df_new.interpolate('linear', limit=2, inplace=True)
-    df_median = pd.read_csv('mesowest_features_medians.csv', index_col=0)
+    df_median = pd.read_csv('datasets/mesowest_features_medians.csv', index_col=0)
     medians = df_median['0'].to_dict()
     df_new.fillna(medians, inplace=True)
     
@@ -262,7 +262,7 @@ def get_mesowest_feature_dict():
     """
     Returns dictionary with station as keys and a list of measurements as values
     """
-    weather_features = list(pd.read_csv('cleaned_features_mesowest.csv', index_col='Date_Time').columns)
+    weather_features = list(pd.read_csv('datasets/cleaned_features_mesowest.csv', index_col='Date_Time').columns)
     weather_stations = [ feature.split('_')[0] for feature in weather_features ]
     weather_stations = list(set(weather_stations))
     feature_dict = {station: [] for station in weather_stations}
