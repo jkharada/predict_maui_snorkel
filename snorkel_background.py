@@ -109,7 +109,7 @@ def get_mean_station_data(station, meas_list):
     df_buoy = pd.DataFrame(data, columns=data[0])
     
     df_buoy = df_buoy.drop(index=[0,1])[:-1] #drop last empty row and first two rows with header names
-    df_buoy.replace(['MM'], None, inplace=True) #MM means no data
+    df_buoy.replace({'MM': None}, inplace=True) #MM means no data
     
     df_buoy.rename(columns = {'#YY': 'year', 'MM': 'month', 'DD': 'day'}, inplace=True)
     df_buoy['date'] = pd.to_datetime(df_buoy[['year','month','day']])
