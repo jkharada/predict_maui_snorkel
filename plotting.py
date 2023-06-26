@@ -7,7 +7,7 @@ def plot_error(df):
       
     error_plot = alt.Chart(df_error).mark_point().encode(
         x = alt.X('Dates', axis=alt.Axis(labelAngle=-45)),
-        y = 'Scores',
+        y = alt.Y('Scores', scale=alt.Scale(domain=[0,10])),
         color = alt.Color('Label', scale=alt.Scale(scheme='category10'))
     ).configure_axis(
         labelFontSize = 18,
