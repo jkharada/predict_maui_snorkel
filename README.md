@@ -1,5 +1,5 @@
 # predict_snorkel_maui
-## [https://maui-snorkel-prediction.onrender.com/](https://maui-snorkel-prediction.onrender.com/)
+[https://maui-snorkel-prediction.onrender.com/](https://maui-snorkel-prediction.onrender.com/)
 
 ## Simple description:
 Predicts snorkeling conditions in the Northwest region of Maui (Napili, Kapalua, and Honolua) based on the previous day's weather conditions. This model is intended to be updated at midnight of the current day, so that early risers in the Eastern part of Maui can know whether to head out to the Northwest region of Maui without having to wait for the official report from the Snorkel Store.
